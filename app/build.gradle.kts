@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.ksp)
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -41,6 +43,10 @@ android {
 }
 
 dependencies {
+    implementation(platform("com.google.firebase:firebase-bom:33.11.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+
     implementation(libs.androidx.room.runtime) // Runtime do Room
     ksp(libs.androidx.room.compiler) // Room Annotation Processor -> gera automaticamente código DAO
     implementation(libs.androidx.room.ktx) // Extensão do Room para Coroutines

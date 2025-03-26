@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,10 +36,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import br.com.exemplo.todo.viewmodel.ProfileViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(onLogoutSuccess: () -> Unit) {
+    val viewModel: ProfileViewModel = viewModel()
+    val profileState by viewModel.profileState.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -48,6 +56,8 @@ fun ProfileScreen() {
             )
         }
     ) { padding ->
+
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -55,67 +65,57 @@ fun ProfileScreen() {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Profile Picture
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "Profile Icon",
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.size(80.dp)
+
+            if (profileState.isLoading) {
+                CircularProgressIndicator()
+            } else if (profileState.user != null) {
+
+                // Profile Picture
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Profile Icon",
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(80.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // User Name
+                Text(
+                    text = "${profileState.user?.email}",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+
+                ProfileActionButton(
+                    icon = Icons.Default.Person,
+                    text = "Log Out",
+                    onClick = {
+                        viewModel.logout()
+                        onLogoutSuccess()
+                    },
+                    buttonColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError
+                )
+            } else {
+                Text(
+                    text = "Not logged in",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // User Name
-            Text(
-                text = "John Doe",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            // User Email
-            Text(
-                text = "johndoe@email.com",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Actionable Items (Buttons)
-            ProfileActionButton(
-                icon = Icons.Default.Person,
-                text = "Edit Profile",
-                onClick = { /* Handle Edit Profile */ }
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            ProfileActionButton(
-                icon = Icons.Default.Person,
-                text = "Change Password",
-                onClick = { /* Handle Change Password */ }
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            ProfileActionButton(
-                icon = Icons.Default.Person,
-                text = "Log Out",
-                onClick = { /* Handle Log Out */ },
-                buttonColor = MaterialTheme.colorScheme.error,
-                contentColor = MaterialTheme.colorScheme.onError
-            )
         }
     }
 }
@@ -155,5 +155,5 @@ fun ProfileActionButton(
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen()
+    ProfileScreen(onLogoutSuccess = {})
 }

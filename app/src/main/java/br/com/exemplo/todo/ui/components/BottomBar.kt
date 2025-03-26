@@ -1,6 +1,7 @@
 package br.com.exemplo.todo.ui.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
@@ -21,7 +22,8 @@ fun BottomBar(navController: NavController) {
     NavigationBar {
         listOf(
             BottomNavigationItemData("home", "Home", Icons.Default.Home),
-            BottomNavigationItemData("profile", "Profile", Icons.Default.Person)
+            BottomNavigationItemData("profile", "Profile", Icons.Default.Person),
+            BottomNavigationItemData("login", "Login", Icons.Default.Face)
         ).forEach { item ->
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = null) },

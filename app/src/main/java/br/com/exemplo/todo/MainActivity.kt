@@ -4,22 +4,25 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import br.com.exemplo.todo.data.local.TaskDao
 import br.com.exemplo.todo.data.model.Task
 import br.com.exemplo.todo.data.repository.TaskRepository
 import br.com.exemplo.todo.ui.components.BottomBar
 import br.com.exemplo.todo.ui.screens.AddTaskScreen
 import br.com.exemplo.todo.ui.screens.HomeScreen
+import br.com.exemplo.todo.ui.screens.LoginScreen
 import br.com.exemplo.todo.ui.screens.ProfileScreen
 import br.com.exemplo.todo.ui.theme.TodoTheme
 import br.com.exemplo.todo.viewmodel.TaskViewModel
@@ -72,8 +75,18 @@ fun NavigationHost(
 ) {
     NavHost(navController = navController, startDestination = "home", modifier = modifier) {
         composable("home") { HomeScreen(taskViewModel, navController) } // Passa o ViewModel
-        composable("profile") { ProfileScreen() }
-        composable("addTask") { AddTaskScreen(taskViewModel, navController) } // Passa o ViewModel
+        composable("profile") { ProfileScreen(onLogoutSuccess = { }) }
+        composable("login") {
+            LoginScreen(onLoginSuccess = {
+                navController.navigate("home")
+            })
+        }
+        composable("addTask") {
+            AddTaskScreen(
+                taskViewModel,
+                navController
+            )
+        } // Passa o ViewModel
     }
 }
 
@@ -98,6 +111,10 @@ fun TodoAppPreview() {
                     Task(id = 2, title = "Sample Task 2")
                 )
             )
+        }
+
+        override suspend fun getTaskById(id: Int): Task? {
+            return Task(id = 1, title = "Demo")
         }
     }
 
