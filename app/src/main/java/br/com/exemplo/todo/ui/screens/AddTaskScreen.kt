@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -49,7 +47,8 @@ fun AddTaskScreen(taskViewModel: TaskViewModel, navController: NavController) {
                 ),
                 actions = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back",
+                        Icon(
+                            Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back",
                             tint = Color.White
                         )
                     }
@@ -74,7 +73,7 @@ fun AddTaskScreen(taskViewModel: TaskViewModel, navController: NavController) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = {
                     if (newTask.isNotBlank()) {
-                        taskViewModel.addTask(Task(title = newTask))
+                        taskViewModel.addTask(Task(id = null, description = newTask))
                         navController.navigate("home")
                     }
                 }) {

@@ -18,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import br.com.exemplo.todo.data.local.TaskDao
 import br.com.exemplo.todo.data.model.Task
+import br.com.exemplo.todo.data.repository.TaskFirebaseRepository
 import br.com.exemplo.todo.data.repository.TaskRepository
 import br.com.exemplo.todo.ui.components.BottomBar
 import br.com.exemplo.todo.ui.screens.AddTaskScreen
@@ -34,8 +35,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val taskDao = TodoApplication.database.taskDao() // Obtém o DAO
-        val repository = TaskRepository(taskDao) // Cria o repositório
+        val repository = TaskFirebaseRepository() // Cria o repositório
         val taskViewModel: TaskViewModel by viewModels {
             TaskViewModelFactory(repository)
         }
@@ -89,44 +89,5 @@ fun NavigationHost(
         } // Passa o ViewModel
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun TodoAppPreview() {
-    // Fake TaskDao implementation for the preview
-    val fakeTaskDao = object : TaskDao {
-        override suspend fun insertTask(task: Task) {
-            // No-op for preview
-        }
-
-        override suspend fun deleteTask(task: Task) {
-            // No-op for preview
-        }
-
-        override fun getAllTasks(): Flow<List<Task>> {
-            // Return a static list or empty flow for preview purposes
-            return flowOf(
-                listOf(
-                    Task(id = 1, title = "Sample Task 1"),
-                    Task(id = 2, title = "Sample Task 2")
-                )
-            )
-        }
-
-        override suspend fun getTaskById(id: Int): Task? {
-            return Task(id = 1, title = "Demo")
-        }
-    }
-
-    // Repository and ViewModel setup
-    val taskRepository = TaskRepository(fakeTaskDao)
-    val fakeTaskViewModel = TaskViewModel(taskRepository)
-
-    // Pass the fake ViewModel into TodoApp for the preview
-    TodoTheme {
-        TodoApp(taskViewModel = fakeTaskViewModel)
-    }
-}
-
 
 data class BottomNavigationItemData(val route: String, val label: String, val icon: ImageVector)

@@ -113,7 +113,7 @@ fun HomeScreen(taskViewModel: TaskViewModel, navController: NavHostController) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = task.title,
+                                text = task.description,
                                 modifier = Modifier.weight(1f),
                                 style = MaterialTheme.typography.bodyLarge
                             )

@@ -1,19 +1,19 @@
 package br.com.exemplo.todo.data.local
 
 import androidx.room.*
-import br.com.exemplo.todo.data.model.Task
+import br.com.exemplo.todo.data.model.TaskEntity
 
 @Dao
 interface TaskDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTask(task: Task)
+    suspend fun insertTask(task: TaskEntity)
 
     @Delete
-    suspend fun deleteTask(task: Task)
+    suspend fun deleteTask(task: TaskEntity)
 
     @Query("SELECT * FROM tasks")
-    fun getAllTasks(): kotlinx.coroutines.flow.Flow<List<Task>>
+    fun getAllTasks(): kotlinx.coroutines.flow.Flow<List<TaskEntity>>
 
     @Query("SELECT * FROM tasks WHERE id = :id")
-    suspend fun getTaskById(id: Int): Task?
+    suspend fun getTaskById(id: Int): TaskEntity?
 }
